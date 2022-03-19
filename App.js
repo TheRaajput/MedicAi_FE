@@ -1,20 +1,28 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+const Stack = createNativeStackNavigator()
 
-export default function App() {
+
+// Routes
+import Home from './Components/Home';
+import Heart from './Components/Screens/Heart';
+import Lungs from './Components/Screens/Lungs';
+import Brain from './Components/Screens/Brain';
+import Eye from './Components/Screens/Eye';
+
+
+const App = () =>{
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <NavigationContainer>
+      <Stack.Navigator>
+        <Stack.Screen component={Home} name="Home" options={{title:"Welcome to Medic AI"}}/>
+        <Stack.Screen component={Heart} name="Heart" options={{title:"Welcome to Heart Diagnosis"}}/>
+        <Stack.Screen component={Lungs} name="Lungs" options={{title:"Welcome to Lungs Diagnosis"}}/>
+        <Stack.Screen component={Eye} name="Eye" options={{title:"Welcome to Eye Diagnosis"}}/>
+        <Stack.Screen component={Brain} name="Brain" options={{title:"Welcome to Brain Diagnosis"}}/>
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
+export default App
