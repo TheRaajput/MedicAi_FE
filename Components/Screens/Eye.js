@@ -5,6 +5,7 @@ import * as ImagePicker from "expo-image-picker";
 import RBSheet from "react-native-raw-bottom-sheet";
 import axios from "axios";
 import placeholder from "../../assets/placeholder.png";
+import { url } from "../../env";
 
 const Eye = (props) => {
   const [image, setImage] = useState([]);
@@ -23,21 +24,33 @@ const Eye = (props) => {
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
     });
-    setImage([...image, result.uri]);
+    setImage([...image, result]);
   };
   const handleSubmit = () => {
-    const formData = new FormData();
-    for (let items in image) {
-      formData.append("image", items);
-    }
+    let formData = new FormData();
+    formData.append("image", [
+      { uri: image[0].uri, type: "image/jpeg", name: "left_eye" },
+      { uri: image[1].uri, type: "image/jpeg", name: "right_eye" },
+    ]);
     setisLoading(true);
     axios
-      .post("https://medicbackend.herokuapp.com/eye", formData)
+      .post(`${url}/eye`, formData, {
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "multipart/form-data",
+        },
+        transformRequest: (data, headers) => {
+          return formData;
+        },
+      })
       .then((res) => {
         console.log(res.data);
         setisLoading(false);
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        alert(err);
+        return;
+      });
   };
   return (
     <View style={styles.mainContainer}>
@@ -45,14 +58,14 @@ const Eye = (props) => {
       <View style={styles.innerContainer}>
         <TouchableOpacity onPress={pickImage} style={{ padding: 8 }}>
           <Image
-            source={image.length >= 1 ? { uri: image[0] } : placeholder}
-            style={{ width: 150, height: 150 }}
+            source={image.length >= 1 ? { uri: image[0].uri } : placeholder}
+            style={{ width: 170, height: 170 }}
           />
         </TouchableOpacity>
         <TouchableOpacity onPress={pickImage} style={{ padding: 8 }}>
           <Image
-            source={image.length === 2 ? { uri: image[1] } : placeholder}
-            style={{ width: 150, height: 150 }}
+            source={image.length === 2 ? { uri: image[1].uri } : placeholder}
+            style={{ width: 170, height: 170 }}
           />
         </TouchableOpacity>
       </View>
@@ -92,6 +105,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: "center",
     justifyContent: "space-evenly",
+    padding: 8,
   },
   innerContainer: {
     flexDirection: "row",

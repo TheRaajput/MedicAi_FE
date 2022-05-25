@@ -18,6 +18,8 @@ import {
 import CustomText from "../UI/CustomText";
 import { Button } from "react-native-paper";
 
+// Api route
+import { url } from "../../env";
 const Heart = (props) => {
   const [Age, setAge] = useState("");
   const [gender, setGender] = useState("1");
@@ -32,7 +34,10 @@ const Heart = (props) => {
   const [SlopePeak, setSlopePeak] = useState("");
   const [MajorVes, setMajorves] = useState("");
   const [ThalSlope, setThalSlope] = useState("");
-  const [Result, setResult] = useState({});
+  const [Result, setResult] = useState({
+    status: "0",
+    message: { Percentages: "0", result: "0" },
+  });
 
   const [isLoading, setisLoading] = useState(false);
 
@@ -55,17 +60,16 @@ const Heart = (props) => {
       ThalScore: ThalSlope,
     };
     setisLoading(true);
-    console.log(data);
     axios
-      .post("http://ec2-3-87-2-115.compute-1.amazonaws.com:8080/heart", data)
+      .post(`${url}/heart`, data)
       .then((response) => {
         setResult(response.data);
         setisLoading(false);
         refRBSheet.current.open();
-        console.log(response.data);
+        console.log(response.data)
       })
       .catch((err) => {
-        alert(err)
+        alert(err);
       });
   };
 
@@ -143,8 +147,7 @@ const Heart = (props) => {
         <View
           style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
         >
-          <Text>{Result.message.Percentages <= 0.5 ? "Safe" : "Not Safe"}</Text>
-          <Text>{Result.message.Percentages * 100}</Text>
+          <Text>{Result.message.Percentages}</Text>
         </View>
       </RBSheet>
     </ScrollView>

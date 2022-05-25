@@ -5,12 +5,44 @@ import * as ImagePicker from "expo-image-picker";
 import RBSheet from "react-native-raw-bottom-sheet";
 import axios from "axios";
 import placeholder from "../../assets/placeholder.png";
+import { url } from "../../env";
 
 const Brain = (props) => {
   const [image, setImage] = useState(null);
   const refRBSheet = useRef();
-  const [Result, setResult] = useState({});
+  const [Result, setResult] = useState({
+    status: "0",
+    message: { Percentages: "0", result: "0" },
+  });
   const [isLoading, setisLoading] = useState(false);
+  const handleSubmit = () => {
+    setisLoading(true);
+    let formdata = new FormData();
+    formdata.append("image", {
+      uri: image.uri,
+      type: "image/jpeg",
+      name: "brainimage",
+    });
+    axios
+      .post(`${url}/brain`, formdata, {
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "multipart/form-data",
+        },
+        transformRequest: (data, headers) => {
+          return formdata;
+        },
+      })
+      .then((response) => {
+        setisLoading(false);
+        setResult(response.data);
+        refRBSheet.current.open();
+        console.log(response.data)
+      })
+      .catch((err) => {
+        alert(err);
+      });
+  };
 
   const pickImage = async () => {
     let permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -23,7 +55,7 @@ const Brain = (props) => {
       mediaTypes: ImagePicker.MediaTypeOptions.Images,
       allowsEditing: true,
     });
-    setImage(result.uri);
+    setImage(result);
   };
   return (
     <View style={styles.mainContainer}>
@@ -31,16 +63,16 @@ const Brain = (props) => {
       <View style={styles.innerContainer}>
         <TouchableOpacity onPress={pickImage} style={{ padding: 8 }}>
           <Image
-            source={image.length >= 1 ? { uri: image[0] } : placeholder}
-            style={{ width: 150, height: 150 }}
+            source={image !== null ? { uri: image.uri } : placeholder}
+            style={{ width: 200, height: 200 }}
           />
         </TouchableOpacity>
       </View>
       <Button
         mode="contained"
-        onPress={handleSubmit}
         loading={isLoading}
         style={{ marginTop: 16 }}
+        onPress={handleSubmit}
       >
         Get Result
       </Button>
