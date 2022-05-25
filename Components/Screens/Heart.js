@@ -147,7 +147,8 @@ const Heart = (props) => {
         <View
           style={{ flex: 1, justifyContent: "center", alignItems: "center" }}
         >
-          <Text>{Result.message.Percentages}</Text>
+          <Text>{(Result.message.Percentages)*100}</Text>
+          <Text>{Result.message.answer}</Text>
         </View>
       </RBSheet>
     </ScrollView>

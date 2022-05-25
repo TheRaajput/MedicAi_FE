@@ -1,1 +1,1 @@
-export const url = "http://ec2-3-89-31-168.compute-1.amazonaws.com:8080"
+export const url = "http://ec2-3-84-99-207.compute-1.amazonaws.com:8080"

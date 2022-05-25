@@ -37,7 +37,6 @@ const Brain = (props) => {
         setisLoading(false);
         setResult(response.data);
         refRBSheet.current.open();
-        console.log(response.data)
       })
       .catch((err) => {
         alert(err);
